@@ -1,0 +1,6 @@
+{
+	"$JSON('project.json'):webroot->": [
+		"E5R.Framework.Blog.FrontEnd",
+		"E5R.Framework.Blog.Images"
+	]
+}

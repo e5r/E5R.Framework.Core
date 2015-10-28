@@ -1,0 +1,10 @@
+[Bb]in/
+[Oo]out/
+node_modules/
+[Bb]uild/
+[Aa]rtifacts
+
+
+*.log
+
+project.lock.json

@@ -3,20 +3,17 @@
 
 var gulp = require('gulp'),
 	gutil = require('gulp-util'),
-	
 	config = require('../../config'),
 	dotnet = require('../../src/gulp-dotnet5'),
-	
 	path = require('path'),
-	
 	log = gutil.log;
-	
+
 gulp.task('build.dotnet', function() {
 	// TODO: Check before, ASPNET_Environment
 	// Development -> Debug
 	// Others -> Release
 	var configuration = 'Release';
-	
+
 	return gulp.src(path.join(config.paths.src, '**/project.json'))
 		.pipe(dotnet.dnu('restore', {
 			verbose: false,

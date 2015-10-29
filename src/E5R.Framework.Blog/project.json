@@ -1,13 +1,11 @@
 {
-	"authors": [
-		"E5R Development Team"
-	],
-	"description": "E5R Software Core Blog",
-	"version": "1.0.0-dev",
-	
-	"dependencies": {},
-	
-	"frameworks": {
-		"dnx451": {}
-	}
+    "authors": [
+        "E5R Development Team"
+    ],
+    "description": "E5R Software Core Blog",
+    "version": "1.0.0-dev",
+    "dependencies": {},
+    "frameworks": {
+        "dnx451": {}
+    }
 }

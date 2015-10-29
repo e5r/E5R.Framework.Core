@@ -2,16 +2,16 @@
 // Licensed under the Apache License, Version 2.0. More license information in LICENSE.txt.
 
 var gulp = require('gulp'),
-	gutil = require('gulp-util'),
-	
-	config = require('../../config'),
-	log = gutil.log;
+    gutil = require('gulp-util'),
+
+    config = require('../../config'),
+    log = gutil.log;
 
 var build = [
-	'build.dotnet'
+    'build.dotnet'
 ];
 
-gulp.task('default', [].concat(build), function() {
-	log('Running default gulp task...');
-	log(config.files.package.name, 'v' + config.files.package.version);
+gulp.task('default', [].concat(build), function () {
+    log('Running default gulp task...');
+    log(config.files.package.name, 'v' + config.files.package.version);
 });

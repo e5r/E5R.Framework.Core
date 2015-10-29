@@ -9,12 +9,12 @@ namespace E5R.Software.Skeleton.Core
     public class UnitOfWork : IUnitOfWork
     {
         private readonly IList<IAggregate> _works;
-
+        
         public UnitOfWork()
         {
             _works = new List<IAggregate>();
         }
-
+        
         public void AddAggregate(IAggregate aggregate)
         {
             if (!_works.Contains(aggregate))

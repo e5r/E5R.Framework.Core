@@ -13,7 +13,7 @@ namespace E5R.Software.Skeleton.Core
         IEnumerable<TEntity> Get();
         IEnumerable<TEntity> Search(Expression<Func<TEntity, bool>> where);
         TEntity Find(TIdentifier id);
-
+        
         // Modification
         TEntity Add(TEntity entity);
         TEntity Modify(TIdentifier id, TEntity entity);

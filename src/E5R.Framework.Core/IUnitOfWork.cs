@@ -3,9 +3,9 @@
 
 namespace E5R.Software.Skeleton.Core
 {
-	public interface IUnitOfWork
-	{
-		void AddAggregate(IAggregate aggregate);
-		void SaveWork();
-	}
+    public interface IUnitOfWork
+    {
+        void AddAggregate(IAggregate aggregate);
+        void SaveWork();
+    }
 }

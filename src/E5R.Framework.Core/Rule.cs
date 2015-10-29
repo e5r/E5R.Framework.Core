@@ -5,11 +5,11 @@ using System;
 
 namespace E5R.Software.Skeleton.Core
 {
-	public class Rule
-	{
-		public string Code { get; set; }
-		public string Description { get; set; }
-		public bool ForceBreak { get; set; }
-		public Func<bool> Check { get; set; }
-	}
+    public class Rule
+    {
+        public string Code { get; set; }
+        public string Description { get; set; }
+        public bool ForceBreak { get; set; }
+        public Func<bool> Check { get; set; }
+    }
 }

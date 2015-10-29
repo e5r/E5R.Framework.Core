@@ -5,13 +5,14 @@ using System;
 
 namespace E5R.Software.Skeleton.Core
 {
-	public class ViolatedRuleException : Exception
-	{
-		public Rule Rule { get; set; }
-		public ViolatedRuleException(Rule rule)
-			: base($"{ rule.Code } rule violated: { rule.Description }")
-		{
-			Rule = rule;
-		}
-	}
+    public class ViolatedRuleException : Exception
+    {
+        public Rule Rule { get; set; }
+        
+        public ViolatedRuleException(Rule rule)
+            : base($"{ rule.Code } rule violated: { rule.Description }")
+        {
+            Rule = rule;
+        }
+    }
 }

@@ -4,9 +4,9 @@
 namespace E5R.Software.Skeleton.Core
 {
     public interface IAggregate
-	{
-		void SaveChanges();
-		bool HasChanges();
-		void Seed();
-	}
+    {
+        void SaveChanges();
+        bool HasChanges();
+        void Seed();
+    }
 }

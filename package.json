@@ -1,7 +1,7 @@
 {
   "name": "E5R.Framework.Core",
   "version": "1.0.0-dev",
-  "description": "E5R Framework Core",
+  "description": "E5R Framework Core Skeleton",
   "author": "E5R Development Team",
   "license": "Apache-2.0",
   "private": true,

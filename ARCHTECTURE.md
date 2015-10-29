@@ -79,7 +79,7 @@ Os arquivos de informação são:
 
 Este arquivo. Que descreve a arquitetura para o desenvolvimento do software.
 
-### LICENSE.MD
+### LICENSE.txt
 
 Informações de licença do produto.
 
@@ -126,7 +126,7 @@ Todos os arquivos de código fonte devem iniciar com a nota de direitos autorais
 > C#, JavaScript/TypeScript, Jade Sass
 ```csharp
 // Copyright (c) E5R Development Team. All rights reserved.
-// Licensed under the Apache License, Version 2.0. More license information in LICENSE.md.
+// Licensed under the Apache License, Version 2.0. More license information in LICENSE.txt.
 ```
 
 ## Nomes C#

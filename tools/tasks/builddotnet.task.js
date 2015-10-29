@@ -1,12 +1,10 @@
 // Copyright (c) E5R Development Team. All rights reserved.
-// Licensed under the Apache License, Version 2.0. More license information in LICENSE.md.
+// Licensed under the Apache License, Version 2.0. More license information in LICENSE.txt.
 
 var gulp = require('gulp'),
-	gutil = require('gulp-util'),
 	config = require('../../config'),
-	dotnet = require('../../src/gulp-dotnet5'),
-	path = require('path'),
-	log = gutil.log;
+	dotnet = require('gulp-dotnet5'),
+	path = require('path');
 
 gulp.task('build.dotnet', function() {
 	// TODO: Check before, ASPNET_Environment

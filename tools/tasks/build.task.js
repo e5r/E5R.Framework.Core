@@ -5,13 +5,16 @@ var gulp = require('gulp'),
     gutil = require('gulp-util'),
 
     config = require('../../config'),
-    log = gutil.log;
+    log = gutil.log,
+    
+    GREEN = gutil.colors.green;
 
 var build = [
     'build.dotnet'
 ];
 
-gulp.task('build', [].concat(build), function () {
-    log(gutil.colors)
-	log('Building', config.files.package.name, 'v' + config.files.package.version + '...');
+gulp.task('build', build, function(){
+    var name = config.files.package.name,
+        version = 'v' + config.files.package.version;
+    log('All build finished for', '\'' + GREEN(name, version) + '\'');
 });

@@ -21,5 +21,9 @@ module.exports = {
         'global': require(path.resolve(cwd, 'global.json')),
         'package': require(path.resolve(cwd, 'package.json')),
         'tsconfig': require(path.resolve(cwd, 'tsconfig.json'))
+    },
+    dotnet: {
+        configuration: (process.env['DOTNET_ENV'] || process.env['ASPNET_ENV'] || 'Production')
+            .toLowerCase() === 'development' ? 'Debug' : 'Release'
     }
 };

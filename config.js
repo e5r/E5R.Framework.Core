@@ -4,21 +4,23 @@
 /* global process */
 
 var fs = require('fs'),
-    path = require('path');
+    path = require('path'),
+    cwd = process.cwd();
 
 module.exports = {
     paths: {
-        doc: path.resolve('./doc'),
-        src: path.resolve('./src'),
-        test: path.resolve('./test'),
-        tools: path.resolve('./tools'),
-        stage: path.resolve('./build'),
-        dist: path.resolve('./artifacts')
+        root: cwd,
+        doc: path.resolve(cwd, 'doc'),
+        src: path.resolve(cwd, 'src'),
+        test: path.resolve(cwd, 'test'),
+        tools: path.resolve(cwd, 'tools'),
+        stage: path.resolve(cwd, 'build'),
+        dist: path.resolve(cwd, 'artifacts')
     },
     files: {
-        'global': require(path.resolve('./global.json')),
-        'package': require(path.resolve('./package.json')),
-        'tsconfig': require(path.resolve('./tsconfig.json'))
+        'global': require(path.resolve(cwd, 'global.json')),
+        'package': require(path.resolve(cwd, 'package.json')),
+        'tsconfig': require(path.resolve(cwd, 'tsconfig.json'))
     },
     dotnet: {
         configuration: (process.env['DOTNET_ENV'] || process.env['ASPNET_ENV'] || 'Production')

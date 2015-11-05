@@ -1,10 +1,14 @@
 {
+    "description": "E5R Software Core Blog",
+    "version": "1.0.0-dev",
     "authors": [
         "E5R Development Team"
     ],
-    "description": "E5R Software Core Blog",
-    "version": "1.0.0-dev",
-    "dependencies": {},
+    "webroot": "wwwroot",
+    "dependencies": {
+        "Microsoft.AspNet.Server.WebListener": "1.0.0-beta8",
+        "Microsoft.AspNet.StaticFiles": "1.0.0-beta8"
+    },
     "frameworks": {
         "dnx451": {}
     }

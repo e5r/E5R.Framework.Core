@@ -3,15 +3,29 @@
 
 var gulp = require('gulp'),
     gutil = require('gulp-util'),
-
     config = require('../../config'),
-    log = gutil.log;
+    
+    log = console.log,
 
-var build = [
-    'build.dotnet'
-];
+    EOL = require('os').EOL,
+    CYAN = gutil.colors.cyan,
+    YELLOW = gutil.colors.yellow,
+    GREY = gutil.colors.grey;
 
-gulp.task('default', [].concat(build), function () {
-    log('Running default gulp task...');
-    log(config.files.package.name, 'v' + config.files.package.version);
+gulp.task('default', function () {
+    log(EOL);
+    log(YELLOW('Usage: gulp'), CYAN('[tasks]'), EOL);
+
+    log([
+        'Tasks:',
+        '  ' + CYAN('build.dotnet') + '          Build .NET components',
+        '  ' + CYAN('build') + '                 Build all components',
+        '  ' + CYAN('configure') + ' ' + GREY('[tools]') + '     Configure development tools',
+        '',
+        'Tools:',
+        '  ' + GREY('--vscode') + '              Configure Visual Studio Code'
+    ].join(EOL), EOL);
+
+    log(YELLOW('Paths:'), GREY(JSON.stringify(config.paths, null, 4)));
+    log(EOL);
 });

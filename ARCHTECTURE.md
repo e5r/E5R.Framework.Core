@@ -96,7 +96,7 @@ e link para demais informações.
 
 Arquivo com configurações globais para os componentes de **backend** .NET.
 
-### GULPCONF.JS
+### CONFIG.JS
 
 Configurações de ambiente para execução das tarefas de construção.
 
@@ -112,11 +112,6 @@ Metadados do projeto e dependências NODEJS/NPM necessárias para as atividades 
 
 Configurações do compilador TypeScript.
 
-### TSD.JSON
-
-Configurações do Gerenciador de referências de definições TypeScript.
-
-
 # Guidelines
 
 ## Copyright
@@ -129,7 +124,7 @@ Todos os arquivos de código fonte devem iniciar com a nota de direitos autorais
 // Licensed under the Apache License, Version 2.0. More license information in LICENSE.txt.
 ```
 
-## Nomes C#
+## Nomenclatura CSharp
 
 *Arquivos*: PascalCase
 *Namespaces*: PascalCase, Iniciando sempre com prefixo *E5R.Category.Product.Component*, onde:
@@ -146,7 +141,7 @@ Todos os arquivos de código fonte devem iniciar com a nota de direitos autorais
   
 > TODO: Seguir C# Coding Standards
 
-## E5R.SOFTWARE.SKELETON.CORE
+## SRC/E5R.FRAMEWORK.CORE
 
 Este componente é a base do desenvolvimento **backend** de softwares que persistem dados de
 alguma maneira.

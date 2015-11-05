@@ -1,19 +1,20 @@
 {
-    "name": "E5R.Framework.Core",
-    "version": "1.0.0-dev",
-    "description": "E5R Framework Core Skeleton",
-    "author": "E5R Development Team",
-    "license": "Apache-2.0",
-    "private": true,
-    "readme": "README.txt",
-    "engines": {
-        "node": ">=4.2",
-        "npm": ">=2.14"
-    },
-    "devDependencies": {
-        "gulp": "^3.9.0",
-        "gulp-util": "^3.0.7",
-        "gulp-dotnet5": "^0.1.0",
-        "require-dir": "^0.3.0"
-    }
+  "name": "E5R.Framework.Core",
+  "version": "1.0.0-dev",
+  "description": "E5R Framework Core Skeleton",
+  "author": "E5R Development Team",
+  "license": "Apache-2.0",
+  "private": true,
+  "readme": "README.txt",
+  "engines": {
+    "node": ">=4.2",
+    "npm": ">=3.3"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-dotnet5": "^0.1.2",
+    "gulp-util": "^3.0.7",
+    "lodash": "^3.10.1",
+    "require-dir": "^0.3.0"
+  }
 }

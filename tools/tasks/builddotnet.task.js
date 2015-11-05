@@ -7,14 +7,9 @@ var gulp = require('gulp'),
     path = require('path');
 
 gulp.task('build.dotnet', function () {
-    // TODO: Check before, ASPNET_Environment
-    // Development -> Debug
-    // Others -> Release
-    var configuration = 'Release';
-
     return gulp.src(path.join(config.paths.src, '**/project.json'))
         .pipe(dotnet.dnu('restore', {
-            verbose: false,
+            verbose: true,
             args: [
                 '<%= file.path %>',
                 '--source', 'https://www.myget.org/F/aspnetvnext/api/v2',
@@ -26,13 +21,13 @@ gulp.task('build.dotnet', function () {
             ]
         }))
         .pipe(dotnet.dnu('build', {
-            verbose: false,
+            verbose: true,
             outPathBase: config.paths.stage,
             args: [
                 '<%= file.path %>',
                 '--out', '<%= outPath %>',
                 '--quiet',
-                '--configuration', configuration
+                '--configuration', config.dotnet.configuration
             ]
         }));
 });

@@ -7,6 +7,7 @@ var gulp = require('gulp'),
     config = require('../../config'),
     log = gutil.log,
     
+    TASK_NAME = 'build',
     GREEN = gutil.colors.green,
     
     build = [
@@ -23,4 +24,4 @@ task.doc = {
     text: 'Build all components'
 };
 
-gulp.task('build', build, task);
+gulp.task(TASK_NAME, build, task);

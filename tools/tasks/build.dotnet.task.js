@@ -4,7 +4,9 @@
 var gulp = require('gulp'),
     config = require('../../config'),
     dotnet = require('gulp-dotnet5'),
-    path = require('path');
+    path = require('path'),
+    
+    TASK_NAME = 'build.dotnet';
 
 function task() {
     return gulp.src(path.join(config.paths.src, '**/project.json'))
@@ -32,4 +34,4 @@ task.doc = {
     text: 'Build .NET components'
 };
 
-gulp.task('build.dotnet', task);
+gulp.task(TASK_NAME, task);

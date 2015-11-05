@@ -7,7 +7,8 @@ var $ = require('lodash'),
     config = require('../../config'),
     
     log = console.log,
-
+    
+    TASK_NAME = 'default',
     EOL = require('os').EOL,
     CYAN = gutil.colors.cyan,
     YELLOW = gutil.colors.yellow,
@@ -98,4 +99,4 @@ function task() {
     log(EOL);
 }
 
-gulp.task('default', task);
+gulp.task(TASK_NAME, task);

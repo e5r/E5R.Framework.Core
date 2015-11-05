@@ -6,7 +6,9 @@
 var gulp = require('gulp'),
     fs = require('fs'),
     path = require('path'),
-    config = require('../../config');
+    config = require('../../config'),
+    
+    TASK_NAME = 'configure';
 
 function task(done) {
     var args = process.argv.slice(2);
@@ -37,4 +39,4 @@ task.doc = {
     }
 };
 
-gulp.task('configure', task);
+gulp.task(TASK_NAME, task);

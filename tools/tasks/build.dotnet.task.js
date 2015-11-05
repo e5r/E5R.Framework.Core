@@ -6,23 +6,19 @@ var gulp = require('gulp'),
     dotnet = require('gulp-dotnet5'),
     path = require('path');
 
-gulp.task('build.dotnet', function () {
+function task() {
     return gulp.src(path.join(config.paths.src, '**/project.json'))
         .pipe(dotnet.dnu('restore', {
-            verbose: true,
+            verbose: false,
             args: [
                 '<%= file.path %>',
-                '--source', 'https://www.myget.org/F/aspnetvnext/api/v2',
-                '--no-cache',
-                '--quiet',
-                '--parallel',
-                '--lock',
-                '--ignore-failed-sources'
+                '--quiet'
             ]
         }))
         .pipe(dotnet.dnu('build', {
-            verbose: true,
+            verbose: false,
             outPathBase: config.paths.stage,
+            outPathSufix: 'bin', // TODO: Implements on "gulp-dotnet5" component
             args: [
                 '<%= file.path %>',
                 '--out', '<%= outPath %>',
@@ -30,4 +26,10 @@ gulp.task('build.dotnet', function () {
                 '--configuration', config.dotnet.configuration
             ]
         }));
-});
+}
+
+task.doc = {
+    text: 'Build .NET components'
+};
+
+gulp.task('build.dotnet', task);

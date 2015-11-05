@@ -7,14 +7,20 @@ var gulp = require('gulp'),
     config = require('../../config'),
     log = gutil.log,
     
-    GREEN = gutil.colors.green;
+    GREEN = gutil.colors.green,
+    
+    build = [
+        'build.dotnet'
+    ];
 
-var build = [
-    'build.dotnet'
-];
-
-gulp.task('build', build, function(){
+function task() {
     var name = config.files.package.name,
         version = 'v' + config.files.package.version;
     log('All build finished for', '\'' + GREEN(name, version) + '\'');
-});
+}
+
+task.doc = {
+    text: 'Build all components'
+};
+
+gulp.task('build', build, task);

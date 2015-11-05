@@ -8,7 +8,7 @@ var gulp = require('gulp'),
     path = require('path'),
     config = require('../../config');
 
-gulp.task('configure', function (done) {
+function task(done) {
     var args = process.argv.slice(2);
 
     for (var a in args) {
@@ -26,6 +26,15 @@ gulp.task('configure', function (done) {
             }
         }
     }
-    
+
     done(null);
-});
+}
+
+task.doc = {
+    text: 'Configure development tools',
+    Tools: {
+        '--vscode': 'Configure Visual Studio Code'
+    }
+};
+
+gulp.task('configure', task);

@@ -13,7 +13,19 @@ Aqui falaremos do Framework para Back-End.
 Este componente é a base do desenvolvimento **backend** de softwares que persistem dados de
 alguma maneira.
 
-O modelo está centrado 4 conceitos. São eles:
+Sempre que falamos em persistência, lembramos dos bancos de dados relacionais, ORM`s e coisas
+afins. Mas procuramos tratar a persistência da forma mais generalizada possível. Portanto, aqui
+você se deparará com alguns conceitos que parecerão estranhos pra quem já é acostumado com a
+persitência padrão de projetos C#/.NET, que é o SQL Server (ou outro banco) junto ao
+EntityFramework.
+
+Sempre que achar algo estranho a primeira vista, procure pensar na persistência sendo feita não
+necessariamente em um banco de dados, mas em um sistema de arquivos ou em um repositório de 
+arquivos distribuídos na rede. Talvez fique mais fácil absorver os conceitos.
+
+Mas vamos lá. O modelo está centrado em alguns conceitos básicos.
+
+São eles:
 
 ### Aggregate
 
@@ -25,12 +37,17 @@ Então os agregados contextualizam os objetos envolvidos em operações semelhan
 instanciação de "toda base de dados" nunca será necessária, aumentando a performance, principalmente
 em aplicações web.
 
-A interface **IAggregate** é a base para este conceito. Além de agrupar as entidades, um agregado dá
-suporte a um outro conceito que veremos mais abaixo, **UnitOfWork*; para isso _IAggregate_ expôe os
-métodos _SaveChanges()_ que trabalha como um _Commit_ em base de dados relacionais, o método
-_HasChanges()_ verifica se existem mudanças passíveis de serem persistidas. Além destes métodos, temos
-ainda _Seed()_ que é usado para popular as tabelas como os dados iniciais, provido para inicialização
-de dados.
+Correndo o risco de estragar todo o seu entendimento sobre o que pretendemos explicar aqui, vou me arriscar
+e pedir para que pense em um agregado como um __Context__ do __EntityFramework__ se preferir, porque ele normalmente pendura os __DbSet<T>__, que por sua vez são os objetos que usamos para acessar os dados
+de cada (e uma só) entidade no banco. Você logo perceberá várias diferenças, mas a princípio, se você
+já desenvolve com EntityFramework, talvez isso te ajude a entender.
+
+A interface **IAggregate** é a base para este conceito. Além de agrupar as os __Storages__ para as entidades
+envolvidas no contexto, um agregado dá suporte a um outro conceito que veremos mais adiante, **UnitOfWork*;
+para isso _IAggregate_ expôe os métodos _SaveChanges()_ que trabalha como um _Commit_ em base de dados relacionais, e o método _HasChanges()_, que verifica se existem mudanças passíveis de serem persistidas.
+
+> TODO: Além destes métodos, temos ainda _Seed()_ que é usado para popular as tabelas como os dados iniciais,
+> provido para inicialização de dados. Ainda estamos analisando o melhor local para aplicá-lo.
 
 Veja abaixo a interface:
 
@@ -39,7 +56,7 @@ interface IAggregate
 {
     void SaveChanges();
     bool HasChanges();
-    void Seed();
+    //void Seed();
 }
 ```
 
@@ -66,9 +83,10 @@ class BlogAggregate : IAggregate
 ### UnitOfWork
 
 Uma unidade de trabalho agrupa várias operações que devem ser realizadas de forma atômica,
-comparando a uma base de dados relacional, seria agrupar várias operações e dar um _Commit_
-ao final. Este funciona em conjunto com o conceito de Agregado. Você observou o construtor da
-class **BlogAggregate**?
+comparando a uma base de dados relacional, seria agrupar várias operações em uma _Transaction_
+e depois dar um _Commit_ ou _Rollback_ ao final. Este funciona em conjunto com o conceito de Agregado.
+
+Você observou o construtor da class **BlogAggregate**?
 
 ```csharp
 public BlogAggregate(IUnitOfWork work)
@@ -88,7 +106,46 @@ public interface IUnitOfWork
 {
     void AddAggregate(IAggregate aggregate);
     void SaveWork();
+
+    /*
+     * Isso aqui pode fazer com que SaveChanges() e HasChanges()
+     * deixem de existir em IAggregate. Porque o commit em si
+     * na verdade ocorre na unidade de trabalho e não nos agregados.
+     *
+     * Os agregados em si seriam só atalhos mesmo para os Storages.
+     *
+     * Os agregados podem então repassar esses guardas de sessão
+     * para seus Storages via esse GetSettion(), uma vez que o
+     * agregado recebe um IUnitOfWork no construtor.
+     *
+     * Esse objeto é representado por uma interface vazia só pra
+     * facilitar o uso de métodos de extensão que podem converter
+     * o objeto real, que se trata de um simples Object para o
+     * tipo da implementação.
+     *
+     * Em uma implementação EF do UoW, a unidade de trabalho
+     * inicializa uma transaction, e repassa aos agregados.
+     * Os agregados repassam para os Storages, que por sua vez
+     * usam os "Context" em si, esses como recebem uma Transaction,
+     * podem então operar sobre seu contexto na Transaction recebida
+     * ao invés do uso padrão.
+     *
+     * Em uma implementação ADO, isso seria bastante parecido, porém
+     * sem o uso de "Context", mas aqui o objeto de sessão poderia
+     * ser uma combinação de Connection + Transaction, onde os Storages
+     * quando recebessem pudessem operar no ADO com a Connection e
+     * Transaction específica.
+     *
+     * Em uma implementação com Dapper por exemplo, poderia ser utilizado
+     * o mesmo conceito que ADO, visto que Dapper roda em cima de ADO
+     * por natureza.
+     */
+    IUnitOfWorkSessionGuard GetSession();
 }
+
+// Guarda de sessão da unidade de trabalho.
+// Representaria um Transaction().
+interface IUnitOfWorkSessionGuard {}
 ```
 
 ### Storage

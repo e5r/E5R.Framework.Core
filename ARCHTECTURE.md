@@ -168,8 +168,7 @@ de dados.
 Veja abaixo a interface:
 
 ```csharp
-// IAggregate.cs
-public interface IAggregate
+interface IAggregate
 {
     void SaveChanges();
     bool HasChanges();
@@ -180,20 +179,20 @@ public interface IAggregate
 Uma aplicação de blog poderia ter uma implementação semelhante a essa:
 
 ```csharp
-public class BlogAggregate : IAggregate
+class BlogAggregate : IAggregate
 {
-    public BlogAggregate(IUnitOfWork work)
+    BlogAggregate(IUnitOfWork work)
     {
         work.AddAggregate(this);
     }
     
-    public void SaveChanges() { }
-    public void HasChanges() { }
-    public void Seed() { }
+    void SaveChanges() { }
+    void HasChanges() { }
+    //void Seed() { }
     
-    public IOrderedQueryable<Blog> Blogs { get; set; }
-    public IOrderedQueryable<Post> Posts { get; set; }
-    public IOrderedQueryable<Comment> Comments { get; set; }
+    IStoreByInt<Blog> Blog { get; set; }
+    IStoreByInt<Post> Post { get; set; }
+    IStoreByInt<Comment> Comment { get; set; }
 }
 ```
 
@@ -201,7 +200,7 @@ public class BlogAggregate : IAggregate
 
 Uma unidade de trabalho agrupa várias operações que devem ser realizadas de forma atômica,
 comparando a uma base de dados relacional, seria agrupar várias operações e dar um _Commit_
-ao final. Este funciona em conjunto com o conceito de Agregado, você observou o construtor da
+ao final. Este funciona em conjunto com o conceito de Agregado. Você observou o construtor da
 class **BlogAggregate**?
 
 ```csharp
@@ -218,7 +217,6 @@ operações executadas nos agregados instanciados também são confirmados.
 A interface **IUnitOfWork** define essas operações:
 
 ```csharp
-// IUnitOfWork.cs
 public interface IUnitOfWork
 {
     void AddAggregate(IAggregate aggregate);
@@ -228,32 +226,73 @@ public interface IUnitOfWork
 
 ### Storage
 
-Um _Storage_ é um armazem de dados, e o conceito que aplica o normalmente utilizado
+Um _Storage_ é um armazem de dados, e o conceito que aplica "o normalmente utilizado"
 **Repository Pattern**, onde nós temos um local central para operar completamente em uma
 _única entidade_.
 
 O genérico **IStore** nos dá a base para implementar este conceito, ele disponibiliza os
 métodos:
 
-* **Get():** Retorna todos os itens da entidade;
+* **Get():** Retorna todos os itens da entidade, obedecendo a um limite (paginador);
+* **Find():** Busca um único elemento com base em seu identificador;
 * **Search():** Realiza uma busca com critérios;
-* **Find():** Busca um único elemento com base em seu ID;
-* **Add():** Adiciona um novo elemento;
-* **Modify():** Modifica um elemento já existente com base em seu ID;
-* **Remove():** Remove um elemento existente com base em seu ID;
+* **Create():** Cria (adiciona) um novo item;
+* **Replace():** Substitui (modifica) um elemento já existente com base em seu identificador;
+* **Remove():** Remove um elemento existente com base em seu identificador;
+
+E ainda temos os métodos que auxiliam a persistência em massa:
+
+* **BulkCreate():** Cria (adiciona) um conjunto de novos itens;
+* **BulkReplace():** Substitui (modifica) um conjunto de elementos já existentes com base em seu identificador;
+* **BulkRemove():** Remove um conjunto de elementos existentes com base em seu identificador;
 
 Observe o genérico:
 
 ```csharp
-// IStore`2.cs
-public interface IStore<TEntity, TIdentifier>
+interface IStore<TModel, TIdenifier>  where T : Model<TIdenifier>
 {
-    IEnumerable<TEntity> Get();
-    IEnumerable<TEntity> Search(Expression<Func<TEntity, bool>> where);
-    TEntity Find(TIdentifier id);
-    TEntity Add(TEntity entity);
-    TEntity Modify(TIdentifier id, TEntity entity);
+    IEnumerable<ModelValidator<TModel>> GetValidators(StoreAction action);
+
+    TModel Create(TModel model);
+    TModel Replace(IDictionary<TIdenifier, TModel> model);
     void Remove(TIdentifier id);
+
+    IEnumerable<TModel> BulkCreate(IEnumerable<TModel> models);
+    IEnumerable<TModel> BulkReplace(IEnumerable<IDictionary<TIdenifier, TModel>> models);
+    void BulkRemove(IEnumerable<TIdentifier> ids);
+
+    IEnumerable<TModel> Get(Limiter limiter);
+    TModel Find(TIdenifier id);
+    IEnumerable<TModel> Search(Filter filter);
+}
+```
+
+> TODO: Algumas notas sobre outros conceitos que complementam `IAggregate`.
+
+```csharp
+class ModelValidator<T> where T : Model
+{
+    Validate (IStore<T> store, T model) {}
+}
+
+class Model {}
+
+class Model<TIdenifier> : Model
+{
+    TIdenifier Id { get; set; }
+}
+
+interface IStoreByInt<T> : IStore<T, int> {}
+interface IStoreByStr<T> : IStore<T, string> {}
+
+class Limiter {} // Paginator
+class Filter : Limiter {}
+
+enum StoreAction
+{
+    Create,
+    Replace,
+    Destroy
 }
 ```
 

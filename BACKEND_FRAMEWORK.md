@@ -8,24 +8,181 @@ tipo de software.
 
 Aqui falaremos do Framework para Back-End.
 
-## SRC/E5R.FRAMEWORK.CORE
-
-Este componente é a base do desenvolvimento **backend** de softwares que persistem dados de
-alguma maneira.
+## PERSISTÊNCIA
 
 Sempre que falamos em persistência, lembramos dos bancos de dados relacionais, ORM`s e coisas
 afins. Mas procuramos tratar a persistência da forma mais generalizada possível. Portanto, aqui
 você se deparará com alguns conceitos que parecerão estranhos pra quem já é acostumado com a
-persitência padrão de projetos C#/.NET, que é o SQL Server (ou outro banco) junto ao
+persitência padrão de projetos C#/.NET, que é o SQL Server (ou outro banco) junto ao ADO ou
 EntityFramework.
 
-Sempre que achar algo estranho a primeira vista, procure pensar na persistência sendo feita não
+Quando encontar algo estranho a primeira vista, procure pensar na persistência sendo feita não
 necessariamente em um banco de dados, mas em um sistema de arquivos ou em um repositório de 
-arquivos distribuídos na rede. Talvez fique mais fácil absorver os conceitos.
+arquivos distribuídos na rede, ou coisa assim. Talvez fique mais fácil absorver os conceitos.
 
 Mas vamos lá. O modelo está centrado em alguns conceitos básicos.
 
 São eles:
+
+### Modelo de Dado
+
+Um modelo de dado, ou simplesmente __DataModel__ é a abstração das propriedades de um objeto que
+possa ser persistido e posteriormente usado. Trata-se de uma classe anêmica, ou crua, como
+preferir.
+
+O objetivo dessa classe é simplesmente conter as informações que podem ser persistidas em algum
+meio. Não é objetivo dessa classe fazer operações, ou aplicar regras de negócio e coisas do
+tipo; por isso, são classes que normalmente não conterão métodos, mas somente propriedades. Mas
+é claro que podem haver pequenas operações, sejam para transformar dados ou fazer algum tipo
+de operação auxiliar.
+
+Mas tais operações nunca envolverão a própria persistência em si, ou algo do tipo. O ideal é (e
+de fato é assim que tratamos aqui) que a persistência em si, e operações de negócio sejam feitas
+por objetos de persistência (Storages) e de negócio (Business Services ou Business Objects).
+
+Ainda temos o modelo de visão, ou `ViewModel`, que será tratado logo mais nesta mesma
+documentação.
+
+> Acho melhor você deixar para pensar nisso quando chegarmos lá.
+
+Porém creio que seja importante ressaltar aqui que o modelo de visão (__ViewModel__) é semelhante
+ao modelo de entidade (__Model__), porém cada um para o seu propósito (ou camada). Enquanto a
+__ViewModel__ está para a tela, ou outro meio de visualização na camada de visão e/ou apresentação,
+o __Model__ está para o mecanismo de persistência, mas precisamente entre a camada de negócio e
+camada de persistência. O __Model__ seria _"tipo"_ um __DTO (Data Transfer Object)__, ou também
+poderia ser comparado com um __DAO (Data Access Object)__
+
+```csharp
+/*
+
+TODO: Continuar falando aqui! A ideia é falar de DTO (DataModel), e falar de Model, e como Model
+é a base para DataModel e ViewModel via o conceito de ModelWrapper.
+
+ModelWrapper é uma classe que envolve um Model, um ViewModel e um DataModel são ModelWrapper
+de Model.
+
+Ainda temos um DomainModel, que eu prefiro chamar de um BusinessObject (que também poderia se
+chamar BusinessModel), que é na verdade um objeto de negócio que também envolve um Model (esse
+é na verdade o nosso BusinessModel), portanto é um ModelWrapper. Mas o papel do mesmo é na
+verdade representar o gráfico do negócio.
+
+Pensando em um Blog. Logo temos o conceito de [BLOG] com as informações do ou dos blogs,
+[POST] como sendo os artigos publicados no blog, e [COMMENT] como sendo os comentários que os
+leitores fizeram em cada artigo publicado.
+
+Isso deixa claro que nosso modelo de domínio (ou DomainModel, ou simplesmente Model no nosso
+caso) tem três objeto, são eles: Blog, Post e Comment.
+
+Eles teriam as seguintes informações, cada um deles:
+
+Blog:
+* Owner
+* Title
+* Url
+
+Post:
+* Date
+* Title
+* Author
+* Content
+
+Comment:
+* Date
+* Title
+* Author
+* Text
+
+Cada um desses objetos precisa fornecer tipos de informações específicas dependendo dos olhos
+que estão sobre eles.
+
+Por exemplo, se você estiver olhando cada objeto com uma visão de persistência, você precisaria
+de algo como:
+
+Blog
+{
+    int BlogID
+    int OwnerID
+    varchar(60) Title
+    varchar(200) Url
+
+    // caso você use a ideia de auditoria das entidades
+    datetime CreatedDate
+    datetime UpdatedDate
+    int CreatedUserID
+    int UpdatedUserID
+
+    // e caso você use a ideia  de deleção lógica
+    bit Deleted
+}
+
+Post
+{
+    int BlogID
+    int PostID
+    datetime Date
+    varchar(60) Title
+    int AuthorID
+    text Content
+    // [+] propriedades de auditoria e deleção lógica
+}
+
+Comment
+{
+    int PostID
+    int CommentID
+    datetime Date
+    int AuthorID
+    varchar(200) Title
+    // [+] propriedades de auditoria e deleção lógica
+}
+
+Se os olhos são do ponto de visão de camada de apresentação, poderia ser:
+
+Blog
+{
+    [Display(Name = "Select a blog")]
+    int BlogID
+    string BlogName
+
+    [Display(Name = "Select a owner")]
+    int OwnerID
+    string OwnerName
+
+    [MaxLength(60)]
+    [Display(Name = "Blog title")]
+    string Title
+
+    [MaxLength(200)]
+    [Display(Name = "Blog URL")]
+    [DataType(DataType.Url)]
+    varchar(200) Url
+}
+
+Post
+{
+    int BlogID
+    int PostID
+    datetime Date
+    varchar(60) Title
+    int AuthorID
+    text Content
+    // [+] propriedades de auditoria e deleção lógica
+}
+
+Comment
+{
+    int PostID
+    int CommentID
+    datetime Date
+    int AuthorID
+    varchar(200) Title
+    // [+] propriedades de auditoria e deleção lógica
+}
+*/
+```
+
+###
+
 
 ### Aggregate
 
@@ -173,35 +330,35 @@ E ainda temos os métodos que auxiliam a persistência em massa:
 Observe o genérico:
 
 ```csharp
-interface IStore<TModel, TIdenifier>  where T : Model<TIdenifier>
+interface IStore<TDataModel, TIdenifier>  where T : DataModel<TIdenifier>
 {
-    IEnumerable<ModelValidator<TModel>> GetValidators(StoreAction action);
+    IEnumerable<DataModelValidator<TDataModel>> GetValidators(StoreAction action);
 
-    TModel Create(TModel model);
-    TModel Replace(IDictionary<TIdenifier, TModel> model);
+    TDataModel Create(TDataModel model);
+    TDataModel Replace(IDictionary<TIdenifier, TDataModel> model);
     void Remove(TIdentifier id);
 
-    IEnumerable<TModel> BulkCreate(IEnumerable<TModel> models);
-    IEnumerable<TModel> BulkReplace(IEnumerable<IDictionary<TIdenifier, TModel>> models);
+    IEnumerable<TDataModel> BulkCreate(IEnumerable<TDataModel> models);
+    IEnumerable<TDataModel> BulkReplace(IEnumerable<IDictionary<TIdenifier, TDataModel>> models);
     void BulkRemove(IEnumerable<TIdentifier> ids);
 
-    IEnumerable<TModel> Get(Limiter limiter);
-    TModel Find(TIdenifier id);
-    IEnumerable<TModel> Search(Filter filter);
+    IEnumerable<TDataModel> Get(Limiter limiter);
+    TDataModel Find(TIdenifier id);
+    IEnumerable<TDataModel> Search(Filter filter);
 }
 ```
 
 > TODO: Algumas notas sobre outros conceitos que complementam `IAggregate`.
 
 ```csharp
-class ModelValidator<T> where T : Model
+class ModelValidator<T> where T : DataModel
 {
     Validate (IStore<T> store, T model) {}
 }
 
-class Model {}
+class DataModel {}
 
-class Model<TIdenifier> : Model
+class DataModel<TIdenifier> : DataModel
 {
     TIdenifier Id { get; set; }
 }

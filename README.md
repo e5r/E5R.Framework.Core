@@ -28,3 +28,12 @@ $> make configure [options]
 ### options
 
 * `--vscode`: Configura o Visual Studio Code 
+
+## Mais ajuda
+
+Saiba mais nos arquivos auxiliares sobre:
+
+* [Estrutura do Projeto](PROJECT_STRUCTURE.md)
+* [Framework de Back-End](BACKEND_FRAMEWORK.md)
+* [Framework de Front-End](FRONTEND_FRAMEWORK.md)
+* [Guia de Estilo "Style Guide"](STYLEGUIDE.md)

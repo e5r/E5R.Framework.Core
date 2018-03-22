@@ -68,34 +68,41 @@ verdade representar o gráfico do negócio.
 
 Pensando em um Blog. Logo temos o conceito de [BLOG] com as informações do ou dos blogs,
 [POST] como sendo os artigos publicados no blog, e [COMMENT] como sendo os comentários que os
-leitores fizeram em cada artigo publicado.
+usuários fizeram em cada artigo publicado.
 
 Isso deixa claro que nosso modelo de domínio (ou DomainModel, ou simplesmente Model no nosso
-caso) tem três objeto, são eles: Blog, Post e Comment.
+caso) tem três objetos, são eles: Blog, Post e Comment.
 
-Eles teriam as seguintes informações, cada um deles:
+PS: Essa é a visão que temos quando aplicamos BDD. Identificamos nossos objetos de domínio.
 
-Blog:
-* Owner
-* Title
-* Url
+Podemos supor as seguintes informações para cada um deles:
 
-Post:
-* Date
-* Title
-* Author
-* Content
+Blog {
+    Owner
+    Title
+    Url
+}
 
-Comment:
-* Date
-* Title
-* Author
-* Text
+Post {
+    Date
+    Title
+    Author
+    Content
+}
 
-Cada um desses objetos precisa fornecer tipos de informações específicas dependendo dos olhos
-que estão sobre eles.
+Comment {
+    Date
+    Title
+    Author
+    Text
+}
 
-Por exemplo, se você estiver olhando cada objeto com uma visão de persistência, você precisaria
+Cada um desses objetos precisa fornecer tipos de informações específicas (e diferentes)
+dependendo dos olhos que estão sobre eles.
+
+Por exemplo:
+
+Se você estiver olhando cada objeto com uma visão de persistência, você precisaria
 de algo como:
 
 Blog
@@ -132,11 +139,13 @@ Comment
     int CommentID
     datetime Date
     int AuthorID
-    varchar(200) Title
+    varchar(60) Title
+    varchar(200) Text
     // [+] propriedades de auditoria e deleção lógica
 }
 
-Se os olhos são do ponto de visão de camada de apresentação, poderia ser:
+Já, se os olhos são do ponto de visão de visão (camada de apresentação),
+poderia ser esperado:
 
 Blog
 {
@@ -155,29 +164,141 @@ Blog
     [MaxLength(200)]
     [Display(Name = "Blog URL")]
     [DataType(DataType.Url)]
-    varchar(200) Url
+    string  Url
 }
 
 Post
 {
-    int BlogID
-    int PostID
-    datetime Date
-    varchar(60) Title
-    int AuthorID
-    text Content
-    // [+] propriedades de auditoria e deleção lógica
+    [Display(Name = "Post data")]
+    DateTime Date
+    
+    [Display(Name = "Post title")]
+    [MaxLength(60)]
+    string Title
+
+    [Display(Name = "Post author")]
+    [MaxLength(60)]
+    string Author
+
+    [Display(Name = "Post content")]
+    string Content
 }
 
 Comment
 {
-    int PostID
-    int CommentID
-    datetime Date
-    int AuthorID
-    varchar(200) Title
-    // [+] propriedades de auditoria e deleção lógica
+    [Display(Name = "Data")]
+    DateTime Date
+
+    [Display(Name = "You name")]
+    [MaxLength(60)]
+    string Author
+
+    [Display(Name = "Title")]
+    [MaxLength(60)]
+    string Title
+
+    [Display(Name = "You comment")]
+    string Text
 }
+
+Agora, se você estivesse olhando de uma perpectiva negocial, seria melhor
+enxergar assim:
+
+Blog {
+    string Owner
+    string Title
+    string Url
+
+    Post[] Posts
+}
+
+Post {
+    DateTime Date
+    string Title
+    string Author
+    string Content
+
+    Blog Blog
+    Comment[] Comments
+}
+
+Comment {
+    DateTime Date
+    string Title
+    string Author
+    string Text
+
+    Post Post
+    Comment[] Reply
+}
+
+Se nós observarmos, para cada perspectiva nós temos algumas informações diferentes para
+cada objeto, vamos aqui observar somente o objeto Post para exemplificarmos:
+
+Nosso objeto Post tem as seguintes informações: {Date, Title, Author, Content}
+
+Mas para persistência, precisamos de informações de referência, ou seja, onde
+temos o Author, na verdade em nosso banco (por exemplo) isso seria uma outra
+tabela e nessa precisaríamos somente da referência, ou seja, [AuthorID].
+Também precisaríamos de informações de auditoria, ou seja, [CreatedDate],
+[UpdatedDate], [CreatedUserID], e [UpdatedUserID]. Além é claro de informações
+para deleção lógica ao invés de física, nesse caso, [Deleted].
+Todos esses dados só tem importância para a persistência, para o negócio em si
+não é importante do ponto de vista de uma apresentação para um cliente por exemplo.
+
+Já para a visão, o importante mesmo são as anotações de nomes das labels para os
+campos nos formulários, como [Display(Name = "Post title")], além é claro dos
+dados para validação como [MaxLength(60)].
+
+Já para uma visão negocial (tipo para uma apresentação visual de relações,
+diagramas UML, apresentação PowerPoint) o que importa é saber que Blog tem uma lista
+de Posts, e Post tem a referência a Blog além da lista de Comments, e Comment por sua
+vez têm a referência de post e uma lista de outros Comments como Reply (respostas).
+Isso faz ficar mais fácil entende o negócio e a relação entre seus objetos.
+
+No fim o que interessa?
+
+Interessa identificar nossos objetos de negócio de uma forma bastante primitiva.
+Esse é o nosso __Model__, pois é a representação mais básica de cada objeto identificado.
+
+Depois nós temos um objeto para cada camada, que tem essas informações básicas
+do nosso modelo, porém com informações adicionais, ou com transformações adicionais,
+para complementar como os dados devem ser vistos para cada camada, a saber:
+
+Camada de persistência, Camada de Visão e Camada de Negócios.
+
+No fim, todos esses outros objetos que não o __Model__ inicial, são nada mais nada mesmos
+do que envelopes, que contém informações pertinentes a sua camada, mas que sempre
+terão as informações primitivas envelopadas alí.
+
+E como se dá a comunicação entre camadas?
+
+Aí que entra esse conceito de __ModelWrapper__. Um __ModelWrapper__ é um objeto que sempre
+tem dentro de si um __Model__. E como os nossos wrappers, independente da camada, sempre
+conhecerão o __Model__ podemos dizer que esse é o mínimo comum entre todas as camadas,
+e assim podemos considerá-lo como nosso DTO (Data Transfer Objetc), não o chamamos
+simplesmente de DTO para não deteriorar o conceito de __ModelWrapper__ que é na verdade
+nossa base.
+
+Assim se você tem um objeto Post na camada Business e deseja enviar para a camada de Persistência,
+seria algo como:
+
+var dto = PostBusinessModel.ToModel()
+CamadaPersistencia.Metodo(dto)
+
+Lá na camada de persistência, podêmos então:
+
+class CamadaPersistencia
+{
+    void Metodo(PostModel dto)
+    {
+        var dao = PostDataModel.FromModel(dto)
+        // ...
+    }
+}
+
+Com isso garantimos a comunicação entre as camadas.
+
 */
 ```
 

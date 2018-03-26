@@ -118,7 +118,7 @@ Blog
     int CreatedUserID
     int UpdatedUserID
 
-    // e caso você use a ideia  de deleção lógica
+    // e caso você use a ideia  de exclusão lógica
     bit Deleted
 }
 
@@ -130,7 +130,7 @@ Post
     varchar(60) Title
     int AuthorID
     text Content
-    // [+] propriedades de auditoria e deleção lógica
+    // [+] propriedades de auditoria e exclusão lógica
 }
 
 Comment
@@ -141,7 +141,7 @@ Comment
     int AuthorID
     varchar(60) Title
     varchar(200) Text
-    // [+] propriedades de auditoria e deleção lógica
+    // [+] propriedades de auditoria e exclusão lógica
 }
 
 Já, se os olhos são do ponto de visão de visão (camada de apresentação),
@@ -242,7 +242,7 @@ temos o Author, na verdade em nosso banco (por exemplo) isso seria uma outra
 tabela e nessa precisaríamos somente da referência, ou seja, [AuthorID].
 Também precisaríamos de informações de auditoria, ou seja, [CreatedDate],
 [UpdatedDate], [CreatedUserID], e [UpdatedUserID]. Além é claro de informações
-para deleção lógica ao invés de física, nesse caso, [Deleted].
+para exclusão lógica ao invés de física, nesse caso, [Deleted].
 Todos esses dados só tem importância para a persistência, para o negócio em si
 não é importante do ponto de vista de uma apresentação para um cliente por exemplo.
 
